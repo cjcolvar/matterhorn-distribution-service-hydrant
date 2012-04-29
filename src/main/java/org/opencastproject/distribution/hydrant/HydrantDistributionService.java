@@ -205,8 +205,8 @@ public class HydrantDistributionService extends AbstractJobProducer implements D
         logger.trace("Found parent pid: {}", parentpid);
 
         try{
-                //TODO make single call to hydrant: /assets/{parentpid}/file_assets posting Filedata[], container_id, and authenticity_token?
-		String url = UrlSupport.concat(new String[] { hydrantUrl, "assets", parentpid, "video_assets?container_id=" + parentpid });
+                //TODO make single call to hydrant: /video_assets posting Filedata[], container_id, and authenticity_token?
+		String url = UrlSupport.concat(new String[] { hydrantUrl, "video_assets?container_id=" + parentpid });
                 MultiThreadedHttpConnectionManager mgr = new MultiThreadedHttpConnectionManager();
                 HttpClient client = new HttpClient(mgr);
 
