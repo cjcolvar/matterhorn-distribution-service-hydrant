@@ -82,6 +82,15 @@ public class HydrantDistributionRestService extends AbstractJobProducerEndpoint 
   protected void setServiceRegistry(ServiceRegistry serviceRegistry) {
     this.serviceRegistry = serviceRegistry;
   }
+  /**
+   * Callback from the OSGi declarative services to set the service registry.
+   * 
+   * @param serviceRegistry
+   *          the service registry
+   */
+  public ServiceRegistry getServiceRegistry() {
+    return serviceRegistry;
+  }
 
   /**
    * @param service
