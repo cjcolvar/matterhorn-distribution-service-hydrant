@@ -205,7 +205,6 @@ public class HydrantDistributionService extends AbstractJobProducer implements D
         logger.trace("Found parent pid: {}", parentpid);
 
         try{
-                //TODO make single call to hydrant: /video_assets posting Filedata[], container_id, and authenticity_token?
 		String url = UrlSupport.concat(new String[] { hydrantUrl, "video_assets?container_id=" + parentpid });
                 MultiThreadedHttpConnectionManager mgr = new MultiThreadedHttpConnectionManager();
                 HttpClient client = new HttpClient(mgr);
@@ -223,14 +222,16 @@ public class HydrantDistributionService extends AbstractJobProducer implements D
                         throw new Exception("Error logging into hydra.");
                 }
 
-                PostMethod post = new PostMethod(url);
-                NameValuePair[] requestPairs = {
-                        new NameValuePair("video_url", element.getURI().toString()),
-                 };
-                post.setRequestBody(requestPairs);
-                int status = client.executeMethod(post);
+                PutMethod put = new PutMethod(url);
+		Part[] parts = {
+                        new StringPart("video_url", element.getURI().toString()),
+		};
+		put.setRequestEntity(
+			new MultipartRequestEntity(parts, put.getParams())
+		);
+                int status = client.executeMethod(put);
                 logger.debug("Got status: " + status);
-                logger.trace("Got response body: " + post.getResponseBodyAsString());
+                logger.trace("Got response body: " + put.getResponseBodyAsString());
         }catch(IOException e){
                 logger.debug("Exception distributing to Hydrant: " + e.getCause());
                 throw new DistributionException("Error distributing to Hydrant instance", e);
