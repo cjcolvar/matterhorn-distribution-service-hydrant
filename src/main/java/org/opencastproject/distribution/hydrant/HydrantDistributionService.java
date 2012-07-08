@@ -208,21 +208,13 @@ public class HydrantDistributionService extends AbstractJobProducer implements D
 		String url = UrlSupport.concat(new String[] { hydrantUrl, "video_assets/" + parentpid });
                 MultiThreadedHttpConnectionManager mgr = new MultiThreadedHttpConnectionManager();
                 HttpClient client = new HttpClient(mgr);
-
-		String loginUrl = UrlSupport.concat(new String[] { hydrantUrl, "users", "sign_in" });
-                PostMethod loginPost = new PostMethod(loginUrl);
-                NameValuePair[] data = {
-                new NameValuePair("user[email]", hydrantAdminUsername),
-                new NameValuePair("user[password]", hydrantAdminPassword),
-                new NameValuePair("user[remember_me]", "0")};
-                loginPost.setRequestBody(data);
-                int loginStatus = client.executeMethod(loginPost);
-                logger.debug("Got status: " + loginStatus);
-                if(loginStatus != 302){
-                        throw new Exception("Error logging into hydra.");
-                }
+		Credentials defaultcreds = new UsernamePasswordCredentials(hydrantAdminUsername, hydrantAdminPassword);
+		client.getState().setCredentials(AuthScope.ANY, defaultcreds);
+		client.getParams().setAuthenticationPreemptive(true);
 
                 PutMethod put = new PutMethod(url);
+		put.setDoAuthentication(true);
+
 		Part[] parts = {
                         new StringPart("video_url", element.getURI().toString()),
 		};
