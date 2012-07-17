@@ -8,7 +8,7 @@
   <parent>
     <groupId>org.opencastproject</groupId>
     <artifactId>base</artifactId>
-    <version>1.3.0</version>
+    <version>1.5-SNAPSHOT</version>
   </parent>
   <properties>
     <matterhorn.basedir>${project.basedir}/../..</matterhorn.basedir>
