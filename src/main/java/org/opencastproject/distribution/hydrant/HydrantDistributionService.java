@@ -205,25 +205,26 @@ public class HydrantDistributionService extends AbstractJobProducer implements D
         logger.trace("Found parent pid: {}", parentpid);
 
         try{
-		String url = UrlSupport.concat(new String[] { hydrantUrl, "video_assets/" + parentpid });
+		String url = UrlSupport.concat(new String[] { hydrantUrl, "derivatives" });
                 MultiThreadedHttpConnectionManager mgr = new MultiThreadedHttpConnectionManager();
                 HttpClient client = new HttpClient(mgr);
 		Credentials defaultcreds = new UsernamePasswordCredentials(hydrantAdminUsername, hydrantAdminPassword);
 		client.getState().setCredentials(AuthScope.ANY, defaultcreds);
 		client.getParams().setAuthenticationPreemptive(true);
 
-                PutMethod put = new PutMethod(url);
-		put.setDoAuthentication(true);
+                PostMethod post = new PostMethod(url);
+		post.setDoAuthentication(true);
 
 		Part[] parts = {
-                        new StringPart("video_url", element.getURI().toString()),
+                        new StringPart("stream_url", element.getURI().toString()),
+                        new StringPart("master", parentpid),
 		};
-		put.setRequestEntity(
-			new MultipartRequestEntity(parts, put.getParams())
+		post.setRequestEntity(
+			new MultipartRequestEntity(parts, post.getParams())
 		);
-                int status = client.executeMethod(put);
+                int status = client.executeMethod(post);
                 logger.debug("Got status: " + status);
-                logger.trace("Got response body: " + put.getResponseBodyAsString());
+                logger.trace("Got response body: " + post.getResponseBodyAsString());
         }catch(IOException e){
                 logger.debug("Exception distributing to Hydrant: " + e.getCause());
                 throw new DistributionException("Error distributing to Hydrant instance", e);
